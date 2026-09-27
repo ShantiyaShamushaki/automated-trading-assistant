@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+repomix-output.xml
+neo4j/data
+neo4j/logs
+neo4j/conf
+steel-browser/.cache
+**/__pycache__
+**/node_modules
+*.log
