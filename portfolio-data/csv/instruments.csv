@@ -1,0 +1,5 @@
+id,symbol,name,asset_class,exchange,currency
+BTC-USD,BTC,Bitcoin,Crypto,Binance,USD
+SPY,SPY,SPDR S&P 500 ETF,Stock,NYSE,USD
+GC=F,GC,Gold Futures,Commodity,COMEX,USD
+EURUSD,EURUSD,Euro/USD,Forex,Forex,USD

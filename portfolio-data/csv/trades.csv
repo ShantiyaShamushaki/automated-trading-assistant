@@ -1,0 +1,2 @@
+trade_id,portfolio_id,instrument_id,action,quantity,price,timestamp,decision_id
+T001,P1,BTC-USD,SELL,0.5,68500,2024-03-15T14:30:00Z,D001

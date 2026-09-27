@@ -1,0 +1,225 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "${LOG_MAX_SIZE:-20m}"
+    max-file: "${LOG_MAX_FILE:-10}"
+    compress: "true"
+
+services:
+  neo4j:
+    image: neo4j:latest
+    restart: unless-stopped
+    volumes:
+      - ./neo4j/logs:/logs
+      - ./neo4j/conf:/conf
+      - ./neo4j/data:/data
+      - ./neo4j/plugins:/plugins
+    environment:
+      NEO4J_AUTH: ${NEO4J_AUTH}
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+      NEO4J_dbms_security_procedures_allowlist: apoc.*
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    networks:
+      - shared-network
+    logging: *default-logging
+
+  db:
+    image: postgres:18
+    shm_size: 1g
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *default-logging
+
+  windmill_server:
+    image: ${WM_IMAGE}
+    pull_policy: if_not_present
+    restart: unless-stopped
+    expose:
+      - "8000"
+      - "2525"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      MODE: server
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - worker_logs:/tmp/windmill/logs
+    networks:
+      - shared-network
+      - default
+    logging: *default-logging
+
+  windmill_worker:
+    image: ${WM_IMAGE}
+    pull_policy: if_not_present
+    restart: unless-stopped
+    privileged: true
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          memory: 2048M
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      MODE: worker
+      WORKER_GROUP: default
+      FAVOR_UNSHARE_PID: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - worker_dependency_cache:/tmp/windmill/cache
+      - worker_logs:/tmp/windmill/logs
+      - ${PORTFOLIO_DATA_PATH:-./portfolio-data}:/data/portfolio
+    networks:
+      - shared-network
+      - default
+    logging: *default-logging
+
+  windmill_worker_native:
+    image: ${WM_IMAGE}
+    pull_policy: if_not_present
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 2048M
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      MODE: worker
+      WORKER_GROUP: native
+      NATIVE_MODE: "true"
+      SLEEP_QUEUE: "200"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - worker_logs:/tmp/windmill/logs
+    logging: *default-logging
+
+  windmill_indexer:
+    image: ${WM_IMAGE}
+    pull_policy: if_not_present
+    restart: unless-stopped
+    deploy:
+      replicas: 0
+    expose:
+      - "8002"
+    environment:
+      PORT: "8002"
+      DATABASE_URL: ${DATABASE_URL}
+      MODE: indexer
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - windmill_index:/tmp/windmill/search
+      - worker_logs:/tmp/windmill/logs
+    logging: *default-logging
+
+  windmill_extra:
+    image: ghcr.io/windmill-labs/windmill-extra:latest
+    pull_policy: if_not_present
+    restart: unless-stopped
+    expose:
+      - "3001"
+      - "3002"
+      - "3003"
+    environment:
+      ENABLE_LSP: "true"
+      ENABLE_MULTIPLAYER: "false"
+      ENABLE_DEBUGGER: "true"
+      DEBUGGER_PORT: "3003"
+      ENABLE_NSJAIL: "false"
+      REQUIRE_SIGNED_DEBUG_REQUESTS: "true"
+      WINDMILL_BASE_URL: http://windmill_server:8000
+    volumes:
+      - lsp_cache:/pyls/.cache
+    logging: *default-logging
+
+  caddy:
+    image: ghcr.io/windmill-labs/caddy-l4:2.11.4-1
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    ports:
+      - "80:80"
+      - "25:25"
+    environment:
+      BASE_URL: ${BASE_URL:-:80}
+    logging: *default-logging
+
+  steel_api:
+    image: ghcr.io/steel-dev/steel-browser-api:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "9223:9223"
+    volumes:
+      - steel_logs:/data/logs
+      - steel_exports:/tmp/steel-browser-exports
+      - ./steel-browser/.cache:/app/.cache
+    environment:
+      DOMAIN: ${DOMAIN:-localhost:3000}
+      CDP_DOMAIN: ${CDP_DOMAIN:-localhost:9223}
+      LOG_STORAGE_ENABLED: "true"
+      LOG_STORAGE_PATH: /data/logs/browser-logs.duckdb
+    networks:
+      steel-network: {}
+      shared-network:
+        ipv4_address: 172.22.0.250
+    logging: *default-logging
+
+  steel_ui:
+    image: ghcr.io/steel-dev/steel-browser-ui:latest
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    environment:
+      API_URL: ${API_URL:-http://steel_api:3000}
+    depends_on:
+      - steel_api
+    networks:
+      - steel-network
+    logging: *default-logging
+
+volumes:
+  db_data:
+  worker_dependency_cache:
+  worker_logs:
+  worker_memory:
+  windmill_index:
+  lsp_cache:
+  caddy_data:
+  steel_logs:
+  steel_exports:
+
+networks:
+  default:
+    name: ${COMPOSE_PROJECT_NAME:-trading-assistant}_default
+  shared-network:
+    name: shared-network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.22.0.0/16
+  steel-network:
+    name: steel-network
+    driver: bridge

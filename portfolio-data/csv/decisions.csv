@@ -1,0 +1,2 @@
+decision_id,timestamp,portfolio_id,instrument_id,action,reasoning,rule_id,factor_ids,outcome_pnl
+D001,2024-03-15T14:00:00Z,P1,BTC-USD,SELL,"Fed hawkish surprise, reduce risk",R001,"FED-2024-03-20;ONCHAIN-2024-03-14",-1200

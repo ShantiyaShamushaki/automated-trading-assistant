@@ -1,0 +1,3 @@
+rule_id,name,condition,action,priority,valid_from,valid_to
+R001,Max Crypto Exposure,"crypto_exposure > 20%","reduce to 10%",1,2024-01-01,2024-12-31
+R002,Stop Loss 5%,"loss > 5%","close position",2,2024-01-01,

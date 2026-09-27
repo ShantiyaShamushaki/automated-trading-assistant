@@ -1,0 +1,123 @@
+# ===== Secrets / env =====
+.env
+.env.*
+!.env.example
+*.env
+!*.env.example
+windmill/.env
+**/auth.ini
+**/auth.ini.tmp
+**/*_auth.ini.tmp
+neo4j/data/dbms/auth.ini
+neo4j/data/dbms/*_auth.ini.tmp
+
+# ===== Repomix output =====
+repomix-output.xml
+repomix-output.*
+
+# ===== Neo4j runtime / data =====
+neo4j/data/
+!neo4j/data/.gitkeep
+neo4j/logs/
+!neo4j/logs/.gitkeep
+neo4j/conf/
+!neo4j/conf/.gitkeep
+neo4j/plugins/*.jar
+!neo4j/plugins/.gitkeep
+neo4j/data/databases/
+neo4j/data/transactions/
+neo4j/data/dbms/
+neo4j/data/server_id
+neo4j/data/store_lock
+
+# ===== Steel Browser =====
+steel-browser/.cache/
+steel-browser/logs/
+steel-browser/exports/
+
+# ===== Windmill runtime =====
+windmill/db_data/
+windmill/worker_logs/
+windmill/*.log
+
+# ===== Logs / temp =====
+*.log
+logs/
+**/logs/
+tmp/
+temp/
+*.tmp
+*.tmp.*
+id-buffer.tmp.*
+checkpoint.*
+neostore.transaction.db.*
+
+# ===== OS =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ===== IDE / editors =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# ===== Obsidian =====
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+.obsidian/plugins/*/data.json
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ===== Node =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+build/
+coverage/
+.cache/
+.parcel-cache/
+
+# ===== Docker =====
+docker-compose.override.yml
+*.pid

@@ -1,0 +1,4 @@
+source_id,source_type,target_id,target_type,relationship,confidence,lag_days,mechanism,evidence
+FED-2024-03-20,Event,USD-STRENGTH,Event,CAUSED,0.9,1,"Rate hike strengthens USD","Historical correlation"
+USD-STRENGTH,Event,BTC-PRICE-DROP,Event,CAUSED,0.8,2,"Strong USD pressures crypto","DXY inverse correlation"
+BTC-PRICE-DROP,Event,D001,Decision,INFLUENCED,0.85,0,"Triggered rule R001","Decision journal"

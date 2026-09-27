@@ -1,0 +1,4 @@
+factor_id,type,name,date,description,source,impact_direction,magnitude,confidence
+FED-2024-03-20,FedPolicy,FOMC Rate Decision,2024-03-20,"Fed raises rates by 25bp, hawkish dot plot",Federal Reserve,negative,high,0.95
+ONCHAIN-2024-03-14,OnChainMetric,BTC Exchange Netflow,2024-03-14,"Large inflow to exchanges, bearish",Glassnode,negative,medium,0.8
+GEO-2024-02-24,GeopoliticalEvent,Russia-Ukraine Escalation,2024-02-24,"Conflict escalation impacts energy markets",News,negative,high,0.9
