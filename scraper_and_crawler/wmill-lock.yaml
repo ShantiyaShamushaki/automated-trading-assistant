@@ -1,0 +1,9 @@
+version: v2
+locks:
+  f/crawler/financial_juice_scraper: b9679eaabf077f334d19b17d023cdd92a88bbf9cd8eebd6b0d932feca798ac44
+  f/crawler/test: 5bd8f0b4fe164db16c53077df13dabfb6bd13d0006146332319308077fc743e0
+  u/shamushakishantiya/test: a8fe719d9f11e4c9e2eff1a8b4943188d2941452082515d8bab0f9042f5115b1
+excludes:
+  - u/**
+includes:
+  - f/**

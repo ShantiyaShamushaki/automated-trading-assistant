@@ -1,0 +1,13 @@
+summary: financial juice crawler
+description: get the leatest new from financialjuice.com through the steel browser
+lock: '!inline f/crawler/financial_juice_scraper.script.lock'
+kind: script
+schema:
+  $schema: https://json-schema.org/draft/2020-12/schema
+  type: object
+  properties:
+    page_num:
+      type: integer
+      description: ''
+      default: 0
+  required: []
