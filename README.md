@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Trading Assistant
 
 Full-time automated trading assistance stack.
@@ -18,3 +19,6 @@ Full-time automated trading assistance stack.
 
    ```bash
    cp .env.example .env
+=======
+
+>>>>>>> 3fb773af5b0b79b2f5a25803178f61f30a59b6dc
